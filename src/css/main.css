@@ -1,0 +1,52 @@
+/* SolarIS Mission Control - Full Screen Hero & Scroll-Down Analytics Theme */
+
+:root {
+  --bg-dark: #0b0e14;
+  --bg-panel: #141a24;
+  --bg-panel-border: rgba(255, 255, 255, 0.08);
+  
+  --color-orange-orange: #d97724;
+  --color-orange-bright: #e67e22;
+  --color-cyan: #00a8ff;
+  --color-yellow: #f1c40f;
+  --color-red: #e74c3c;
+  --color-green: #2ecc71;
+  
+  --text-primary: #f0f3f6;
+  --text-secondary: #9aa7b5;
+  --text-muted: #5e6d7e;
+  
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scroll down enabled */
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.text-orange { color: var(--color-orange-bright) !important; }
+.text-cyan { color: var(--color-cyan) !important; }
+.text-alert { color: var(--color-red) !important; }
+.text-warning { color: var(--color-yellow) !important; }
+.font-bold { font-weight: 700; }

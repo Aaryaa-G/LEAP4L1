@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEAP4L1 | AI Solar Flare Forecasting Mission Control</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <link rel="stylesheet" href="/src/css/components.css" />
+  <link rel="stylesheet" href="/src/css/dashboard.css" />
+</head>
+<body class="mission-control-theme">
+
+  <div id="app" class="app-container">
+
+    <!-- FLOATING TOP HEADER (TRANSPARENT, NO MARGINS) -->
+    <header class="floating-header">
+      <div class="header-left">
+        <div class="brand-logo" style="cursor: pointer;" onclick="switchToView('dashboard')">
+          <span class="brand-name-white">LEAP4L1</span>
+        </div>
+      </div>
+      <div class="header-right-icons">
+        <button class="hdr-icon-btn" title="Active Mission Clock"><span class="mission-clock" id="live-utc-time">00:00:00 UTC</span></button>
+        <button class="hdr-icon-btn" title="Payload Health"><i data-lucide="activity"></i></button>
+        <button class="hdr-icon-btn" title="Toggle Sound"><i data-lucide="volume-2"></i></button>
+      </div>
+    </header>
+
+    <!-- FLOATING LEFT SIDEBAR -->
+    <aside class="floating-sidebar">
+      <nav class="icon-nav">
+        <button class="icon-btn active" id="nav-dashboard-btn" title="Mission Dashboard" onclick="switchToView('dashboard')"><i data-lucide="home"></i></button>
+        <button class="icon-btn" id="nav-nowcast-btn" title="Nowcasting Studio" onclick="switchToView('nowcast')"><i data-lucide="scan"></i></button>
+        <button class="icon-btn" id="nav-forecast-btn" title="Forecasting Terminal" onclick="switchToView('forecast')"><i data-lucide="trending-up"></i></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="icon-btn" title="Settings"><i data-lucide="sliders"></i></button>
+      </div>
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: MAIN DASHBOARD (LANDING PAGE)      -->
+    <!-- ========================================== -->
+    <div id="view-dashboard" class="view-panel active-view">
+      
+      <!-- HERO 3D MODEL SECTION -->
+      <section class="hero-video-section" id="hero-section">
+        <!-- Three.js Canvas will be inserted here dynamically -->
+        
+        <!-- Left Side Title Overlay -->
+        <div class="hero-text-overlay">
+          <h1 class="hero-main-title">LEAP4L1</h1>
+          <p class="hero-sub-title">AI Space Weather & Solar Flare Intelligence for ISRO Aditya-L1 Mission Control.</p>
+          <button class="hero-action-btn" onclick="scrollToAnalysis()">Analyze Telemetry</button>
+        </div>
+
+        <!-- Target Reticle HUD Overlay -->
+        <div class="target-reticle-hud" id="ar-target-hud">
+          <div class="reticle-box">
+            <div class="reticle-corner tl"></div>
+            <div class="reticle-corner tr"></div>
+            <div class="reticle-corner bl"></div>
+            <div class="reticle-corner br"></div>
+            <div class="reticle-circle"></div>
+          </div>
+          <div class="target-info-pointer">
+            <div class="target-title-bar">
+              <span class="target-title" id="hud-ar-name">AR13562</span>
+              <span class="target-class-badge" id="hud-class-badge">CLASS X2.4</span>
+            </div>
+            <div class="target-desc" id="hud-desc">
+              <div class="desc-row"><span class="desc-label">Event:</span><span class="desc-val">Aug 31, 2012 Eruption</span></div>
+              <div class="desc-row"><span class="desc-label">CME Speed:</span><span class="desc-val">>900 mi/s</span></div>
+              <div class="desc-row"><span class="desc-label">Status:</span><span class="desc-val">Click hotspot on Sun to load</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Down Prompt -->
+        <div class="scroll-down-prompt" onclick="scrollToAnalysis()">
+          <span>SCROLL FOR REAL-TIME SERVICES</span>
+          <i data-lucide="chevron-down" class="bounce-icon"></i>
+        </div>
+      </section>
+
+      <!-- SCROLL-DOWN LANDING PORTION -->
+      <section class="analytics-scroll-section" id="analytics-section">
+        <div class="section-title-bar">
+          <h2>SOLAR WEATHER FORECASTING SYSTEM</h2>
+          <span class="status-live-tag">● DB PREVIEW SYNCED</span>
+        </div>
+
+        <!-- NEW OPTION SELECTION CARDS (ON SCROLL) -->
+        <div class="service-cards-container">
+          <div class="service-card" onclick="switchToView('nowcast')">
+            <div class="service-card-glow sc-nowcast-glow"></div>
+            <div class="service-card-content">
+              <div class="service-icon-box cyan-icon"><i data-lucide="scan"></i></div>
+              <h3>Nowcasting Studio</h3>
+              <p>Upload telemetry files in real time. Detect flare occurrences, classify flare magnitudes, and analyze active X-ray flux anomalies.</p>
+              <div class="service-btn-arrow">Run Nowcast <i data-lucide="arrow-right"></i></div>
+            </div>
+          </div>
+
+          <div class="service-card" onclick="switchToView('forecast')">
+            <div class="service-card-glow sc-forecast-glow"></div>
+            <div class="service-card-content">
+              <div class="service-icon-box orange-icon"><i data-lucide="trending-up"></i></div>
+              <h3>Forecasting Terminal</h3>
+              <p>Predict upcoming flaring events. Upload time-range datasets to project future flare classes and localize flaring spots on the 3D Sun.</p>
+              <div class="service-btn-arrow">Launch Predictor <i data-lucide="arrow-right"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORIGINAL TELEMETRY ANALYSIS GRIDS -->
+        <div class="dashboard-grid-layout mt-32">
+          <!-- LEFT COLUMN (DUAL CHARTS & RANKINGS) -->
+          <section class="left-column-panel">
+            <div class="dual-charts-row" id="charts-panel">
+              <div class="panel-card chart-panel-card">
+                <div class="chart-header">
+                  <span class="chart-name">SOLEXS Soft X-Ray Flux</span>
+                  <span class="chart-legend-cyan">― Soft X-Ray Flux</span>
+                </div>
+                <div class="chart-container-inner">
+                  <canvas id="solexs-chart"></canvas>
+                </div>
+              </div>
+
+              <div class="panel-card chart-panel-card">
+                <div class="chart-header">
+                  <span class="chart-name">HE1OS Hard X-Ray Flux</span>
+                  <span class="chart-legend-yellow">― Hard X-Ray Flux</span>
+                </div>
+                <div class="chart-container-inner">
+                  <canvas id="helios-chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="dual-charts-row mt-16">
+              <div class="panel-card ranking-panel-card">
+                <div class="card-header-bar">
+                  <h3 class="card-main-title">Active Region Threat Rankings</h3>
+                </div>
+                <div class="table-responsive">
+                  <table class="ranking-table">
+                    <thead>
+                      <tr><th>Region</th><th>Complexity</th><th>Probability</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><span class="dot-red"></span>AR13562</td><td>Beta-Gamma-Delta</td><td class="text-alert font-bold">91%</td></tr>
+                      <tr><td><span class="dot-orange"></span>AR13647</td><td>Beta-Gamma</td><td class="text-warning">62%</td></tr>
+                      <tr><td><span class="dot-green"></span>AR13639</td><td>Alpha</td><td class="text-cyan">11%</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="panel-card health-panel-card">
+                <div class="card-header-bar">
+                  <h3 class="card-main-title">Satellite Payload Health</h3>
+                </div>
+                <div class="health-list">
+                  <div class="health-item"><span>Payload CPU Load</span><strong>34%</strong></div>
+                  <div class="health-item"><span>Memory Usage</span><strong>58%</strong></div>
+                  <div class="health-item"><span>Downlink Latency</span><strong>1.2s</strong></div>
+                  <div class="health-item"><span>Data Availability</span><strong>99.99%</strong></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- RIGHT COLUMN (STATUS & TIME HORIZON) -->
+          <aside class="right-column-panel" id="overview-panel">
+            <div class="panel-card overview-panel-card">
+              <div class="card-header-bar">
+                <h3 class="card-main-title">Real-Time Database Preview</h3>
+              </div>
+              <div class="overview-body">
+                <div class="overview-group">
+                  <span class="overview-label">Active Flare State:</span>
+                  <span class="overview-val status-critical" id="mission-status-val" style="color: #ff3344">CRITICAL ALERT</span>
+                </div>
+                <div class="overview-group mt-16">
+                  <span class="overview-label">Peak Class Probability:</span>
+                  <span class="overview-val val-large" id="flare-prob-val">91%</span>
+                </div>
+                <div class="overview-group mt-16">
+                  <span class="overview-label">Selected Hotspot Region:</span>
+                  <span class="overview-val val-large" id="est-class-val">AR13562</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card grid-panel-card">
+              <div class="grid-radar-visual">
+                <div class="radar-line-h"></div>
+                <div class="radar-line-v"></div>
+              </div>
+            </div>
+
+            <div class="panel-card horizon-panel-card">
+              <div class="horizon-header">
+                <span class="horizon-title">Rotational Speed Adjust</span>
+              </div>
+              <div class="horizon-body">
+                <div class="range-slider-container">
+                  <input type="range" id="time-horizon-range" min="0" max="200" value="50" />
+                </div>
+                <div class="range-ticks">
+                  <span>Slow</span>
+                  <span>Normal</span>
+                  <span>Fast</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: NOWCASTING STUDIO                  -->
+    <!-- ========================================== -->
+    <div id="view-nowcast" class="view-panel">
+      <div class="subpage-header">
+        <div class="sh-left">
+          <button class="back-home-btn" onclick="switchToView('dashboard')"><i data-lucide="chevron-left"></i> Back</button>
+          <h2>NOWCASTING STUDIO</h2>
+          <span class="header-subtitle">Real-Time Solar Flare Detection Engine</span>
+        </div>
+        <span class="status-live-tag">● ONLINE INGESTION READY</span>
+      </div>
+
+      <div class="subpage-grid-layout">
+        
+        <!-- LEFT COLUMN: FILE INGESTION & RESULTS -->
+        <div class="subpage-left-panel">
+          
+          <!-- FILE UPLOAD CARD -->
+          <div class="panel-card p-24">
+            <h3 class="card-main-title mb-16">1. Telemetry Data Ingestion</h3>
+            <p class="panel-desc mb-20">Ingest real-time solar X-ray flux readings to detect eruptive events. Upload files or select one of our preset solar scenarios to simulate live feeds.</p>
+            
+            <!-- Drag and Drop Zone -->
+            <div class="upload-dropzone" id="nowcast-dropzone">
+              <i data-lucide="upload-cloud" class="upload-icon mb-12"></i>
+              <p class="upload-text">Drag & Drop Telemetry File here</p>
+              <span class="upload-or">or</span>
+              <button class="upload-btn-secondary" onclick="document.getElementById('nowcast-file-input').click()">Browse Files</button>
+              <input type="file" id="nowcast-file-input" accept=".json,.csv" style="display: none;" />
+            </div>
+
+            <!-- Presets Section -->
+            <div class="preset-section mt-20">
+              <span class="preset-label">Test Preset Telemetry:</span>
+              <div class="preset-buttons">
+                <button class="preset-btn" onclick="loadNowcastPreset('quiet')">Quiet Sun Profile</button>
+                <button class="preset-btn warning-preset" onclick="loadNowcastPreset('m_class')">M-Class Flare Precursor</button>
+                <button class="preset-btn danger-preset" onclick="loadNowcastPreset('x_class')">X-Class Major Eruption</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DETECTION RESULTS CARD -->
+          <div class="panel-card p-24 mt-16">
+            <h3 class="card-main-title mb-16">2. AI Flare Detection Engine</h3>
+            
+            <div class="detection-status-wrapper idles-state" id="nowcast-result-banner">
+              <div class="status-indicator-ring"></div>
+              <div class="status-details">
+                <h4 id="nowcast-status-title">Awaiting Telemetry Ingestion</h4>
+                <p id="nowcast-status-desc">Please drag/select a telemetry file or use one of the test profiles above to begin live analysis.</p>
+              </div>
+            </div>
+
+            <div class="stats-grid mt-20">
+              <div class="stat-box">
+                <span class="sb-label">Analysis Timestamp</span>
+                <strong id="stat-timestamp">--:--:--</strong>
+              </div>
+              <div class="stat-box">
+                <span class="sb-label">Peak Soft X-Ray Flux</span>
+                <strong id="stat-peak-soft">-- W/m²</strong>
+              </div>
+              <div class="stat-box">
+                <span class="sb-label">Peak Hard X-Ray Count</span>
+                <strong id="stat-peak-hard">-- cts/s</strong>
+              </div>
+              <div class="stat-box">
+                <span class="sb-label">Classification Output</span>
+                <strong id="stat-class">Class --</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: DYNAMIC TELEMETRY CHARTS -->
+        <div class="subpage-right-panel">
+          <div class="panel-card flex-1 p-24">
+            <div class="chart-header-row mb-16">
+              <h3 class="card-main-title">3. Telemetry Visualizer</h3>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" id="btn-tab-xray">X-Ray Flux</button>
+                <button class="chart-tab-btn" id="btn-tab-magnetic">Magnetic Shear</button>
+              </div>
+            </div>
+            
+            <div class="nowcast-chart-container">
+              <canvas id="nowcast-telemetry-chart"></canvas>
+            </div>
+
+            <!-- Parameters Legend -->
+            <div class="chart-footer-metrics mt-20">
+              <div class="metric-indicator"><span class="legend-color cyan-bg"></span>Soft X-Ray Flux (Solexs)</div>
+              <div class="metric-indicator"><span class="legend-color yellow-bg"></span>Hard X-Ray Photon count (Hel1os)</div>
+              <div class="metric-indicator"><span class="legend-color purple-bg"></span>Magnetic Shear Angle</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: FORECASTING TERMINAL               -->
+    <!-- ========================================== -->
+    <div id="view-forecast" class="view-panel">
+      <div class="subpage-header">
+        <div class="sh-left">
+          <button class="back-home-btn" onclick="switchToView('dashboard')"><i data-lucide="chevron-left"></i> Back</button>
+          <h2>FORECASTING TERMINAL</h2>
+          <span class="header-subtitle">DeepSolarNet Space Weather Predictor</span>
+        </div>
+        <span class="status-live-tag text-warning">● AWAITING SIMULATION RUN</span>
+      </div>
+
+      <div class="forecast-workspace-layout">
+        
+        <!-- LEFT SECTION: INPUTS & ALERTS -->
+        <div class="forecast-left-column">
+          
+          <!-- FORECAST RANGE SELECTOR -->
+          <div class="panel-card p-20">
+            <h3 class="card-main-title mb-12">1. Ingest Time-Range Profile</h3>
+            <p class="panel-desc mb-16">Select or load a multi-hour solar telemetry dataset to project flare probability curves and pinpoint active region triggers.</p>
+            
+            <div class="flex-row-gap-12 mb-16">
+              <div class="input-group-half">
+                <label class="input-lbl">Forecast Horizon</label>
+                <select class="custom-select-xs w-100" id="forecast-horizon">
+                  <option value="24">Next 24 Hours</option>
+                  <option value="48">Next 48 Hours</option>
+                  <option value="72">Next 72 Hours</option>
+                </select>
+              </div>
+              <div class="input-group-half">
+                <label class="input-lbl">Prediction Algorithm</label>
+                <select class="custom-select-xs w-100">
+                  <option>DeepSolarNet Multi-Headed CNN</option>
+                  <option>GRU Temporal LSTM</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="preset-buttons mb-12">
+              <button class="preset-btn w-100 text-center justify-center" onclick="runForecastSimulation('stormy')">
+                <i data-lucide="play" class="mr-6 size-14"></i> Run Active Eruption Forecast
+              </button>
+              <button class="preset-btn w-100 text-center justify-center mt-8 secondary-preset" onclick="runForecastSimulation('quiet')">
+                <i data-lucide="play" class="mr-6 size-14"></i> Run Quiet Sun Forecast
+              </button>
+            </div>
+          </div>
+
+          <!-- SIMULATION TERMINAL LOGS -->
+          <div class="panel-card console-card mt-16">
+            <div class="console-header">
+              <span>DeepSolarNet Execution Console</span>
+              <span class="console-pulse">● IDLE</span>
+            </div>
+            <div class="console-body" id="forecast-console">
+              <div class="console-line text-muted">> System standing by. Click "Run Forecast" to execute predictive neural networks...</div>
+            </div>
+          </div>
+
+          <!-- FORECASTED EVENTS ALERTS FEED -->
+          <div class="panel-card p-20 mt-16 flex-1">
+            <h3 class="card-main-title mb-12">2. Predicted Solar Flare Alerts</h3>
+            <p class="panel-desc mb-12">List of predicted eruptive events. Click a card to focus the 3D Sun projection and trigger coordinates flare animation.</p>
+            
+            <div class="alerts-feed-wrapper" id="forecast-alerts-list">
+              <div class="alerts-empty-state">
+                <i data-lucide="alert-circle" class="text-muted size-32 mb-8"></i>
+                <p>No active forecasts loaded</p>
+                <span>Trigger a forecast simulation run to generate predictive events.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
